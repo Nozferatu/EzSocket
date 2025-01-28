@@ -1,6 +1,8 @@
 import com.cmj.ez_socket.EzServerSocket;
 import com.cmj.ez_socket.EzSocket;
 
+import java.io.File;
+
 public class Prueba {
     public static void main(String[] args) {
         EzServerSocket serverSocket = new EzServerSocket("localhost", 55555);
@@ -17,6 +19,8 @@ public class Prueba {
 
         float numeroFlotante = serverSocket.readFloat();
         System.out.println(numeroFlotante);
+
+        serverSocket.readFile();
     }
 
     static class ClienteThread extends Thread{
@@ -30,6 +34,7 @@ public class Prueba {
             socket.writeString("Adiós");
             socket.writeInteger(22696922);
             socket.writeFloat(5.25f);
+            socket.writeFile(new File("./sent_file.txt"));
         }
     }
 }

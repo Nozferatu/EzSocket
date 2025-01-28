@@ -1,8 +1,6 @@
 package com.cmj.ez_socket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -114,6 +112,25 @@ public class EzSocket{
     public void writeString(String text){
         try {
             output.writeUTF(text);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void writeFile(File file){
+        try {
+            FileInputStream fileInput = new FileInputStream(file);
+
+            //Send the file name
+            output.writeUTF(file.getName());
+
+            byte[] buffer = new byte[1024];
+            int count;
+            while ((count = fileInput.read(buffer)) > 0) {
+                output.write(buffer, 0, count);
+            }
+
+            fileInput.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

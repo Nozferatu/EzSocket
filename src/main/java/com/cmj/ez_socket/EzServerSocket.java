@@ -1,11 +1,11 @@
 package com.cmj.ez_socket;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author Carlos Madrid Jiménez
@@ -132,6 +132,34 @@ public class EzServerSocket {
         if(clientOutput != null){
             try {
                 clientOutput.writeUTF(text);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void readFile(){
+        if(clientInput != null){
+            try {
+                //Receive the file name
+                String fileName = clientInput.readUTF();
+                File file = new File("./received_files/" + fileName);
+
+                //Create directory if it doesn't exist
+                if(!file.exists()){
+                    Files.createDirectory(Paths.get("./received_files/"));
+                }
+                FileOutputStream outputFile = new FileOutputStream(file);
+
+                byte[] buffer = new byte[1024];
+
+                int count;
+                while (clientInput.available() > 0) {
+                    count = clientInput.read(buffer);
+                    outputFile.write(buffer, 0, count);
+                }
+
+                outputFile.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
