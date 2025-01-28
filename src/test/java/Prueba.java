@@ -14,6 +14,9 @@ public class Prueba {
 
         int numero = serverSocket.readInteger();
         System.out.println(numero);
+
+        float numeroFlotante = serverSocket.readFloat();
+        System.out.println(numeroFlotante);
     }
 
     static class ClienteThread extends Thread{
@@ -26,6 +29,7 @@ public class Prueba {
         public void run(){
             socket.writeString("Adiós");
             socket.writeInteger(22696922);
+            socket.writeFloat(5.25f);
         }
     }
 }

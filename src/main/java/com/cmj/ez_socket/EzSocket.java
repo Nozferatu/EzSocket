@@ -31,9 +31,45 @@ public class EzSocket{
         }
     }
 
+    public int readInteger(){
+        if(input != null){
+            int num;
+
+            try {
+                num = input.readInt();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return num;
+        } else return -1;
+    }
+
     public void writeInteger(int n){
         try{
             output.writeInt(n);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public float readFloat(){
+        if(input != null){
+            float num;
+
+            try {
+                num = input.readFloat();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return num;
+        } else return 1f;
+    }
+
+    public void writeFloat(float n){
+        try {
+            output.writeFloat(n);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

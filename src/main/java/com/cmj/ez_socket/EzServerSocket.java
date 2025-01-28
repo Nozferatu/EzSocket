@@ -56,6 +56,40 @@ public class EzServerSocket {
         }else return -1;
     }
 
+    public void writeInt(int n){
+        if(clientOutput != null){
+            try {
+                clientOutput.writeInt(n);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public float readFloat(){
+        if(clientInput != null){
+            float num;
+
+            try {
+                num = clientInput.readFloat();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return num;
+        }else return -1f;
+    }
+
+    public void writeFloat(float n){
+        if(clientOutput != null){
+            try {
+                clientOutput.writeFloat(n);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public String readString(){
         if(clientInput != null){
             String data;
