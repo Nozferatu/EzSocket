@@ -9,10 +9,13 @@ public class Prueba {
         serverSocket.accept();
         clienteThread.start();
 
-        String cadena = serverSocket.readString(256);
+        String cadena = serverSocket.readString();
         System.out.println(cadena);
 
-        serverSocket.writeString("nada");
+        int numero = serverSocket.readInteger();
+        System.out.println(numero);
+
+        //serverSocket.writeString("nada");
     }
 
     static class ClienteThread extends Thread{
@@ -23,9 +26,9 @@ public class Prueba {
 
         @Override
         public void run(){
-            socket.writeString("ola ke ase");
-            System.out.println(socket.readString(256));
+            socket.writeString("Adiós");
+            socket.writeInteger(22696922);
+            //System.out.println(socket.readString(256));
         }
     }
 }
-

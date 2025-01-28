@@ -1,8 +1,8 @@
 package com.cmj.ez_socket;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -13,8 +13,8 @@ import java.net.Socket;
 public class EzSocket{
     private InetSocketAddress address;
     private Socket socket;
-    private OutputStream output;
-    private InputStream input;
+    private DataOutputStream output;
+    private DataInputStream input;
 
     public EzSocket(String address, int port){
         this.address = new InetSocketAddress(address, port);
@@ -22,8 +22,8 @@ public class EzSocket{
         try {
             socket.connect(this.address);
 
-            input = socket.getInputStream();
-            output = socket.getOutputStream();
+            input = new DataInputStream(socket.getInputStream());
+            output = new DataOutputStream(socket.getOutputStream());
 
             System.out.printf("Socket connected in the address %s\n", socket.getInetAddress());
         } catch (IOException e) {
@@ -31,18 +31,23 @@ public class EzSocket{
         }
     }
 
-    public String readString(int bufferSize){
+    public void writeInteger(int n){
+        try{
+            output.writeInt(n);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String readString(){
         if(input != null){
-            byte[] buffer = new byte[bufferSize];
             String data;
 
             try {
-                input.read(buffer);
+                data = input.readUTF();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            data = new String(buffer).trim();
 
             return data;
         } else return "";
@@ -50,7 +55,7 @@ public class EzSocket{
 
     public void writeString(String text){
         try {
-            output.write(text.getBytes());
+            output.writeUTF(text);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

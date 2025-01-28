@@ -1,8 +1,8 @@
 package com.cmj.ez_socket;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,8 +15,8 @@ public class EzServerSocket {
     private InetSocketAddress address;
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private OutputStream clientOutput;
-    private InputStream clientInput;
+    private DataOutputStream clientOutput;
+    private DataInputStream clientInput;
 
     public EzServerSocket(String address, int port){
         this.address = new InetSocketAddress(address, port);
@@ -33,8 +33,8 @@ public class EzServerSocket {
     public void accept(){
         try {
             clientSocket = serverSocket.accept();
-            clientInput = clientSocket.getInputStream();
-            clientOutput = clientSocket.getOutputStream();
+            clientInput = new DataInputStream(clientSocket.getInputStream());
+            clientOutput = new DataOutputStream(clientSocket.getOutputStream());
 
             System.out.printf("Connected with client %s\n", clientSocket.getInetAddress());
         } catch (IOException e) {
@@ -42,18 +42,29 @@ public class EzServerSocket {
         }
     }
 
-    public String readString(int bufferSize){
+    public int readInteger(){
         if(clientInput != null){
-            byte[] buffer = new byte[bufferSize];
-            String data;
+            int num;
 
             try {
-                clientInput.read(buffer);
+                num = clientInput.readInt();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
-            data = new String(buffer).trim();
+            return num;
+        }else return -1;
+    }
+
+    public String readString(){
+        if(clientInput != null){
+            String data;
+
+            try {
+                data = clientInput.readUTF();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             return data;
         } else return "";
@@ -62,7 +73,7 @@ public class EzServerSocket {
     public void writeString(String text){
         if(clientOutput != null){
             try {
-                clientOutput.write(text.getBytes());
+                clientOutput.writeUTF(text);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
