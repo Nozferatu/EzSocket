@@ -11,7 +11,7 @@ import java.nio.file.Paths;
  * @author Carlos Madrid Jiménez
  */
 
-public class EzServerSocket {
+public class EzServerSocket implements AutoCloseable {
     private InetSocketAddress address;
     private ServerSocket serverSocket;
     private Socket clientSocket;
@@ -163,6 +163,20 @@ public class EzServerSocket {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            if(clientSocket != null) {
+                clientInput.close();
+                clientOutput.close();
+                clientSocket.close();
+            }
+            serverSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

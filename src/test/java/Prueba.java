@@ -5,22 +5,23 @@ import java.io.File;
 
 public class Prueba {
     public static void main(String[] args) {
-        EzServerSocket serverSocket = new EzServerSocket("localhost", 55555);
-        ClienteThread clienteThread = new ClienteThread();
+        try (EzServerSocket serverSocket = new EzServerSocket("localhost", 55555)) {
+            ClienteThread clienteThread = new ClienteThread();
 
-        serverSocket.accept();
-        clienteThread.start();
+            serverSocket.accept();
+            clienteThread.start();
 
-        String cadena = serverSocket.readString();
-        System.out.println(cadena);
+            String cadena = serverSocket.readString();
+            System.out.println(cadena);
 
-        int numero = serverSocket.readInteger();
-        System.out.println(numero);
+            int numero = serverSocket.readInteger();
+            System.out.println(numero);
 
-        float numeroFlotante = serverSocket.readFloat();
-        System.out.println(numeroFlotante);
+            float numeroFlotante = serverSocket.readFloat();
+            System.out.println(numeroFlotante);
 
-        serverSocket.readFile();
+            serverSocket.readFile();
+        }
     }
 
     static class ClienteThread extends Thread{
