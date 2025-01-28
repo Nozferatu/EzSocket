@@ -14,8 +14,6 @@ public class Prueba {
 
         int numero = serverSocket.readInteger();
         System.out.println(numero);
-
-        //serverSocket.writeString("nada");
     }
 
     static class ClienteThread extends Thread{
@@ -28,7 +26,6 @@ public class Prueba {
         public void run(){
             socket.writeString("Adiós");
             socket.writeInteger(22696922);
-            //System.out.println(socket.readString(256));
         }
     }
 }
