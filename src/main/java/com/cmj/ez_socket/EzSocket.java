@@ -25,7 +25,7 @@ public class EzSocket{
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
 
-            System.out.printf("Socket connected in the address %s\n", socket.getInetAddress());
+            System.out.printf("[CLIENT] Connected in the address %s\n", socket.getInetAddress());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -65,6 +65,28 @@ public class EzSocket{
 
             return num;
         } else return 1f;
+    }
+
+    public void writeDouble(double n){
+        try {
+            output.writeDouble(n);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public double readDouble(){
+        if(input != null){
+            double num;
+
+            try {
+                num = input.readDouble();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return num;
+        } else return 1.0;
     }
 
     public void writeFloat(float n){

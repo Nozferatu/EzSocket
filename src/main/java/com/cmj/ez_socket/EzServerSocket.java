@@ -24,7 +24,7 @@ public class EzServerSocket {
             serverSocket = new ServerSocket();
             serverSocket.bind(this.address);
 
-            System.out.printf("Server listening in the address %s\n", serverSocket.getInetAddress());
+            System.out.printf("[SERVER] Listening in the address %s\n", serverSocket.getInetAddress());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,7 +36,7 @@ public class EzServerSocket {
             clientInput = new DataInputStream(clientSocket.getInputStream());
             clientOutput = new DataOutputStream(clientSocket.getOutputStream());
 
-            System.out.printf("Connected with client %s\n", clientSocket.getInetAddress());
+            System.out.printf("[SERVER] Connected with client %s\n", clientSocket.getInetAddress());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -84,6 +84,30 @@ public class EzServerSocket {
         if(clientOutput != null){
             try {
                 clientOutput.writeFloat(n);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public double readDouble(){
+        if(clientInput != null){
+            double num;
+
+            try {
+                num = clientInput.readDouble();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return num;
+        }else return -1.0;
+    }
+
+    public void writeDouble(double n){
+        if(clientOutput != null){
+            try {
+                clientOutput.writeDouble(n);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
