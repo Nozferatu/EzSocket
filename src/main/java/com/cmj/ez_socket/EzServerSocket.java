@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * @author Carlos Madrid Jiménez
@@ -17,6 +18,8 @@ public class EzServerSocket implements AutoCloseable {
     private Socket clientSocket;
     private DataOutputStream clientOutput;
     private DataInputStream clientInput;
+    private ObjectOutputStream objectOutput;
+    private ObjectInputStream objectInput;
 
     public EzServerSocket(String address, int port){
         this.address = new InetSocketAddress(address, port);
@@ -35,6 +38,9 @@ public class EzServerSocket implements AutoCloseable {
             clientSocket = serverSocket.accept();
             clientInput = new DataInputStream(clientSocket.getInputStream());
             clientOutput = new DataOutputStream(clientSocket.getOutputStream());
+            objectInput = new ObjectInputStream(clientSocket.getInputStream());
+            objectOutput = new ObjectOutputStream(clientSocket.getOutputStream());
+            clientSocket.setKeepAlive(true);
 
             System.out.printf("[SERVER] Connected with client %s\n", clientSocket.getInetAddress());
         } catch (IOException e) {
@@ -138,6 +144,42 @@ public class EzServerSocket implements AutoCloseable {
         }
     }
 
+    public <E> ArrayList<E> readArrayList(){
+        if(!clientSocket.isClosed()){
+            try {
+                ArrayList<E> list = new ArrayList<>();
+                E item;
+                int listLength = readInteger();
+                int count = 0;
+
+                while(count != listLength){
+                    item = (E) objectInput.readObject();
+                    list.add(item);
+                    count++;
+                }
+
+                return list;
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else return null;
+    }
+
+    public <E> void writeArrayList(ArrayList<E> list){
+        if(!clientSocket.isOutputShutdown()){
+            try {
+                clientOutput.writeInt(list.size());
+
+                for(E item: list){
+                    objectOutput.writeObject(item);
+                    objectOutput.flush();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void readFile(){
         if(clientInput != null){
             try {
@@ -168,6 +210,7 @@ public class EzServerSocket implements AutoCloseable {
 
     @Override
     public void close() {
+        System.out.println("Closing...");
         try {
             if(clientSocket != null) {
                 clientInput.close();
