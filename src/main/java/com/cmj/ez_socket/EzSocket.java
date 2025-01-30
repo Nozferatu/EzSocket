@@ -68,7 +68,7 @@ public class EzSocket{
     public void writeInteger(int n){
         try{
             output.writeInt(n);
-            if(verbose) System.out.printf("[SERVER] Integer sent: %d\n", n);
+            if(verbose) System.out.printf("[CLIENT] Integer sent: %d\n", n);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -79,9 +79,9 @@ public class EzSocket{
             float num;
 
             try {
-                if(verbose) System.out.println("[SERVER] Waiting for Float...");
+                if(verbose) System.out.println("[CLIENT] Waiting for Float...");
                 num = input.readFloat();
-                if(verbose) System.out.printf("[SERVER] Float received: %f\n", num);
+                if(verbose) System.out.printf("[CLIENT] Float received: %f\n", num);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -93,7 +93,7 @@ public class EzSocket{
     public void writeFloat(float n){
         try {
             output.writeFloat(n);
-            if(verbose) System.out.printf("[SERVER] Float sent: %f\n", n);
+            if(verbose) System.out.printf("[CLIENT] Float sent: %f\n", n);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -104,9 +104,9 @@ public class EzSocket{
             double num;
 
             try {
-                if(verbose) System.out.println("[SERVER] Waiting for Double...");
+                if(verbose) System.out.println("[CLIENT] Waiting for Double...");
                 num = input.readDouble();
-                if(verbose) System.out.printf("[SERVER] Double received: %f\n", num);
+                if(verbose) System.out.printf("[CLIENT] Double received: %f\n", num);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -118,7 +118,7 @@ public class EzSocket{
     public void writeDouble(double n){
         try {
             output.writeDouble(n);
-            if(verbose) System.out.printf("[SERVER] Double sent: %f\n", n);
+            if(verbose) System.out.printf("[CLIENT] Double sent: %f\n", n);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -129,9 +129,9 @@ public class EzSocket{
             String data;
 
             try {
-                if(verbose) System.out.println("[SERVER] Waiting for String...");
+                if(verbose) System.out.println("[CLIENT] Waiting for String...");
                 data = input.readUTF();
-                if(verbose) System.out.printf("[SERVER] String received: %s\n", data);
+                if(verbose) System.out.printf("[CLIENT] String received: %s\n", data);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -143,7 +143,16 @@ public class EzSocket{
     public void writeString(String text){
         try {
             output.writeUTF(text);
-            if(verbose) System.out.printf("[SERVER] String sent: %s\n", text);
+            if(verbose) System.out.printf("[CLIENT] String sent: %s\n", text);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void writeObject(Object o){
+        try {
+            objectOutput.writeObject(o);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -155,12 +164,12 @@ public class EzSocket{
                 ArrayList<E> list = new ArrayList<>();
                 E item;
                 int listLength = input.readInt();
-                if (verbose) System.out.printf("[SERVER] ArrayList size: %d\n", listLength);
+                if (verbose) System.out.printf("[CLIENT] ArrayList size: %d\n", listLength);
 
                 int count = 0;
                 while(count != listLength){
                     item = (E) objectInput.readObject();
-                    if (verbose) System.out.printf("[SERVER] Object received: %s\n", item.toString());
+                    if (verbose) System.out.printf("[CLIENT] Object received: %s\n", item.toString());
                     list.add(item);
                     count++;
                 }
@@ -178,7 +187,7 @@ public class EzSocket{
 
             for(E item: list){
                 objectOutput.writeObject(item);
-                if (verbose) System.out.printf("[SERVER] Object sent: %s\n", item.toString());
+                if (verbose) System.out.printf("[CLIENT] Object sent: %s\n", item.toString());
             }
 
             objectOutput.flush();
@@ -201,7 +210,7 @@ public class EzSocket{
             }
 
             fileInput.close();
-            if (verbose) System.out.printf("[SERVER] File sent: %s\n", file.getName());
+            if (verbose) System.out.printf("[CLIENT] File sent: %s\n", file.getName());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
