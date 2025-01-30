@@ -5,7 +5,7 @@ Includes methods for sending primitive types like int, float, double, and even f
 
 Here is an example of how much it changes from using the Socket classes to the EzSocket ones.
 
-<h2> Client </h2>
+<h2> Client example </h2>
 With tradicional Socket:
 
 ```
@@ -25,7 +25,7 @@ EzSocket socket = new EzSocket("localhost", 55555);
 socket.writeString("Hello World!");
 ```
 
-<h2> Server </h2>
+<h2> Server example </h2>
 With tradicional Socket:
 
 ```
