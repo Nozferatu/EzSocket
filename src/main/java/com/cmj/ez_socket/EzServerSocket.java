@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -46,6 +47,9 @@ public class EzServerSocket implements AutoCloseable {
         this.verbose = verbose;
     }
 
+    /**
+     * This method blocks until a connection is established to this socket.
+     */
     public void accept(){
         try {
             clientSocket = serverSocket.accept();
@@ -61,6 +65,10 @@ public class EzServerSocket implements AutoCloseable {
         }
     }
 
+    /**
+     * Blocks and waits for an Integer to be sent to the client input.
+     * @return The integer received through the client input.
+     */
     public int readInteger(){
         if(clientInput != null){
             int num;
@@ -77,6 +85,10 @@ public class EzServerSocket implements AutoCloseable {
         }else return -1;
     }
 
+    /**
+     * Write an Integer through the client output.
+     * @param n Integer to be sent.
+     */
     public void writeInt(int n){
         if(clientOutput != null){
             try {
@@ -88,6 +100,10 @@ public class EzServerSocket implements AutoCloseable {
         }
     }
 
+    /**
+     * Blocks and waits for a Float to be sent to the client input.
+     * @return The float received through the client input.
+     */
     public float readFloat(){
         if(clientInput != null){
             float num;
@@ -104,6 +120,10 @@ public class EzServerSocket implements AutoCloseable {
         }else return -1f;
     }
 
+    /**
+     * Write a Float through the client output.
+     * @param n Float to be sent.
+     */
     public void writeFloat(float n){
         if(clientOutput != null){
             try {
@@ -115,6 +135,10 @@ public class EzServerSocket implements AutoCloseable {
         }
     }
 
+    /**
+     * Blocks and waits for a Double to be sent to the client input.
+     * @return The double received through the client input.
+     */
     public double readDouble(){
         if(clientInput != null){
             double num;
@@ -131,6 +155,10 @@ public class EzServerSocket implements AutoCloseable {
         }else return -1.0;
     }
 
+    /**
+     * Write a Double through the client output.
+     * @param n Float to be sent.
+     */
     public void writeDouble(double n){
         if(clientOutput != null){
             try {
@@ -142,6 +170,10 @@ public class EzServerSocket implements AutoCloseable {
         }
     }
 
+    /**
+     * Blocks and waits for a String to be sent to the client input.
+     * @return The string received through the client input.
+     */
     public String readString(){
         if(clientInput != null){
             String data;
@@ -158,6 +190,10 @@ public class EzServerSocket implements AutoCloseable {
         } else return "";
     }
 
+    /**
+     * Write a String through the client output.
+     * @param text String to be sent.
+     */
     public void writeString(String text){
         if(clientOutput != null){
             try {
@@ -169,29 +205,50 @@ public class EzServerSocket implements AutoCloseable {
         }
     }
 
+    /**
+     * Blocks and waits for an Object to be sent to the client input.
+     * @return The object received through the client input.
+     */
     public Object readObject(){
-        Object o;
+        Object o = null;
 
         try {
             o = objectInput.readObject();
-            if(verbose) System.out.printf("[SERVER] Object received: %s\n", o.toString());
+            if(!(o instanceof EzNotSerializable)){
+                if(verbose) System.out.printf("[SERVER] Object received: %s\n", o.toString());
+            }else{
+                if(verbose) System.out.println("[SERVER] The object sent by the client was not Serializable, returned null");
+            }
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return o;
     }
 
+    /**
+     * Write an Object through the client output. The object must implement the Serializable interface in order to be sent correctly.
+     * @param o Object to be sent.
+     */
     public void writeObject(Object o){
         try {
-            objectOutput.writeObject(o);
-            if(verbose) System.out.printf("[SERVER] Object sent: %s\n", o.toString());
+            if(o instanceof Serializable){
+                objectOutput.writeObject(o);
+                if(verbose) System.out.printf("[SERVER] Object sent: %s\n", o);
+            } else {
+                System.out.println("[SERVER] The object does not implement the Serializable interface, thus cannot be sent.");
+                objectOutput.writeObject(new EzNotSerializable());
+            }
             objectOutput.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Blocks and waits for an ArrayList list to be sent to the client input.
+     * @return The arraylist received through the client input.
+     */
     public <E> ArrayList<E> readArrayList(){
         if(!clientSocket.isClosed()){
             try {
@@ -217,6 +274,11 @@ public class EzServerSocket implements AutoCloseable {
         } else return null;
     }
 
+    /**
+     * Write an ArrayList list through the client output. The objects contained in the list
+     * must implement the Serializable interface in order to be sent correctly.
+     * @param list List to be sent.
+     */
     public <E> void writeArrayList(ArrayList<E> list){
         if(!clientSocket.isOutputShutdown()){
             try {
@@ -259,7 +321,7 @@ public class EzServerSocket implements AutoCloseable {
                 outputFile.close();
                 if (verbose) System.out.printf("[SERVER] File received: %s\n", file.getName());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }

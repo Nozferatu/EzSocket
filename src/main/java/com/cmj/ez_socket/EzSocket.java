@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -49,6 +50,10 @@ public class EzSocket{
         this.verbose = verbose;
     }
 
+    /**
+     * Blocks and waits for an Integer to be sent to the client input.
+     * @return The integer received through the client input.
+     */
     public int readInteger(){
         if(input != null){
             int num;
@@ -65,6 +70,10 @@ public class EzSocket{
         } else return -1;
     }
 
+    /**
+     * Write an Integer through the client output.
+     * @param n Integer to be sent.
+     */
     public void writeInteger(int n){
         try{
             output.writeInt(n);
@@ -74,6 +83,10 @@ public class EzSocket{
         }
     }
 
+    /**
+     * Blocks and waits for a Float to be sent to the client input.
+     * @return The float received through the client input.
+     */
     public float readFloat(){
         if(input != null){
             float num;
@@ -90,6 +103,10 @@ public class EzSocket{
         } else return 1f;
     }
 
+    /**
+     * Write a Float through the client output.
+     * @param n Float to be sent.
+     */
     public void writeFloat(float n){
         try {
             output.writeFloat(n);
@@ -99,6 +116,10 @@ public class EzSocket{
         }
     }
 
+    /**
+     * Blocks and waits for a Double to be sent to the client input.
+     * @return The double received through the client input.
+     */
     public double readDouble(){
         if(input != null){
             double num;
@@ -115,6 +136,10 @@ public class EzSocket{
         } else return 1.0;
     }
 
+    /**
+     * Write a Double through the client output.
+     * @param n Float to be sent.
+     */
     public void writeDouble(double n){
         try {
             output.writeDouble(n);
@@ -124,6 +149,10 @@ public class EzSocket{
         }
     }
 
+    /**
+     * Blocks and waits for a String to be sent to the client input.
+     * @return The string received through the client input.
+     */
     public String readString(){
         if(input != null){
             String data;
@@ -140,6 +169,10 @@ public class EzSocket{
         } else return "";
     }
 
+    /**
+     * Write a String through the client output.
+     * @param text String to be sent.
+     */
     public void writeString(String text){
         try {
             output.writeUTF(text);
@@ -149,29 +182,50 @@ public class EzSocket{
         }
     }
 
+    /**
+     * Blocks and waits for an Object to be sent to the client input.
+     * @return The object received through the client input.
+     */
     public Object readObject(){
-        Object o;
+        Object o = null;
 
         try {
             o = objectInput.readObject();
-            if(verbose) System.out.printf("[CLIENT] Object received: %s\n", o.toString());
+            if(!(o instanceof EzNotSerializable)){
+                if(verbose) System.out.printf("[CLIENT] Object received: %s\n", o.toString());
+            }else{
+                if(verbose) System.out.println("[CLIENT] The object sent by the client was not Serializable, returned null");
+            }
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return o;
     }
 
+    /**
+     * Write an Object through the client output. The object must implement the Serializable interface in order to be sent correctly.
+     * @param o Object to be sent.
+     */
     public void writeObject(Object o){
         try {
-            objectOutput.writeObject(o);
-            if(verbose) System.out.printf("[CLIENT] Object sent: %s\n", o.toString());
+            if(o instanceof Serializable){
+                objectOutput.writeObject(o);
+                if(verbose) System.out.printf("[CLIENT] Object sent: %s\n", o);
+            } else {
+                System.out.println("[CLIENT] The object does not implement the Serializable interface, thus cannot be sent.");
+                objectOutput.writeObject(new EzNotSerializable());
+            }
             objectOutput.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
+    /**
+     * Blocks and waits for an ArrayList list to be sent to the client input.
+     * @return The arraylist received through the client input.
+     */
     public <E> ArrayList<E> readArrayList(){
         if(!socket.isClosed()){
             try {
@@ -195,6 +249,11 @@ public class EzSocket{
         } else return null;
     }
 
+    /**
+     * Write an ArrayList list through the client output. The objects contained in the list
+     * must implement the Serializable interface in order to be sent correctly.
+     * @param list List to be sent.
+     */
     public <E> void writeArrayList(ArrayList<E> list){
         try {
             output.writeInt(list.size());
