@@ -3,15 +3,18 @@ import com.cmj.ez_socket.EzSocket;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ClientTest {
+
     public static void main(String[] args) {
-        EzSocket socket = new EzSocket("localhost", 55555);
+        EzSocket socket = new EzSocket("localhost", 55555, true);
 
         socket.writeString("Adiós");
         socket.writeInteger(22696922);
         socket.writeFloat(5.25f);
+        socket.writeObject(new TestObject("testObject"));
 
         File testFile = new File("./test_file.txt");
         if(!testFile.exists()) createTestFile(testFile);

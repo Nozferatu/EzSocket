@@ -13,6 +13,8 @@ public class ServerTest {
 
         float decimalNumber = serverSocket.readFloat();
 
+        TestObject testObject = (TestObject) serverSocket.readObject();
+
         serverSocket.readFile();
 
         //ArrayList<String> list = serverSocket.readArrayList();
