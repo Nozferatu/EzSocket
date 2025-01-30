@@ -149,10 +149,24 @@ public class EzSocket{
         }
     }
 
+    public Object readObject(){
+        Object o;
+
+        try {
+            o = objectInput.readObject();
+            if(verbose) System.out.printf("[CLIENT] Object received: %s\n", o.toString());
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        return o;
+    }
+
     public void writeObject(Object o){
         try {
             objectOutput.writeObject(o);
-
+            if(verbose) System.out.printf("[CLIENT] Object sent: %s\n", o.toString());
+            objectOutput.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
