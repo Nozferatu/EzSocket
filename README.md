@@ -1,7 +1,7 @@
 # EzSocket, the easy way to use sockets in Java
 
 EzSocket is a Java dependency made with JDK 11 version that simplifies the use of the Socket library, making it easier to use for newbies. <br>
-Includes methods for sending primitive types like int, float, double, and more complex types such as String, ArrayList, even files.
+Includes methods for sending primitive types like int, float, double, and even for more complex types such as ArrayList and files.
 
 Here is an example of how much it changes from using the Socket classes to the EzSocket ones.
 
