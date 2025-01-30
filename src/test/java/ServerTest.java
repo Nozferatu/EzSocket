@@ -4,25 +4,20 @@ import java.util.ArrayList;
 
 public class ServerTest {
     public static void main(String[] args) {
-        EzServerSocket serverSocket = new EzServerSocket("localhost", 55555);
+        EzServerSocket serverSocket = new EzServerSocket("localhost", 55555, true);
         serverSocket.accept();
 
-        String cadena = serverSocket.readString();
-        System.out.println(cadena);
+        String text = serverSocket.readString();
 
-        int numero = serverSocket.readInteger();
-        System.out.println(numero);
+        int number = serverSocket.readInteger();
 
-        float numeroFlotante = serverSocket.readFloat();
-        System.out.println(numeroFlotante);
+        float decimalNumber = serverSocket.readFloat();
 
-        //serverSocket.readFile();
-        ArrayList<String> list = serverSocket.readArrayList();
-        for (String str : list) {
-            System.out.println(str);
-        }
-        list.add("bear");
+        serverSocket.readFile();
 
-        serverSocket.writeArrayList(list);
+        //ArrayList<String> list = serverSocket.readArrayList();
+        //list.add("bear");
+
+        //serverSocket.writeArrayList(list);
     }
 }
