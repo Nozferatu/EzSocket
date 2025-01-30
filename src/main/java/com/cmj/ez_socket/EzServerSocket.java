@@ -68,7 +68,7 @@ public class EzServerSocket implements AutoCloseable {
             try {
                 if(verbose) System.out.println("[SERVER] Waiting for Integer...");
                 num = clientInput.readInt();
-                if(verbose) System.out.printf("[SERVER] Integer received: %s\n", num);
+                if(verbose) System.out.printf("[SERVER] Integer received: %d\n", num);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -81,6 +81,7 @@ public class EzServerSocket implements AutoCloseable {
         if(clientOutput != null){
             try {
                 clientOutput.writeInt(n);
+                if(verbose) System.out.printf("[SERVER] Integer sent: %d\n", n);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -92,7 +93,9 @@ public class EzServerSocket implements AutoCloseable {
             float num;
 
             try {
+                if(verbose) System.out.println("[SERVER] Waiting for Float...");
                 num = clientInput.readFloat();
+                if(verbose) System.out.printf("[SERVER] Float received: %f\n", num);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -105,6 +108,7 @@ public class EzServerSocket implements AutoCloseable {
         if(clientOutput != null){
             try {
                 clientOutput.writeFloat(n);
+                if(verbose) System.out.printf("[SERVER] Float sent: %f\n", n);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -116,7 +120,9 @@ public class EzServerSocket implements AutoCloseable {
             double num;
 
             try {
+                if(verbose) System.out.println("[SERVER] Waiting for Double...");
                 num = clientInput.readDouble();
+                if(verbose) System.out.printf("[SERVER] Double received: %f\n", num);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -129,6 +135,7 @@ public class EzServerSocket implements AutoCloseable {
         if(clientOutput != null){
             try {
                 clientOutput.writeDouble(n);
+                if(verbose) System.out.printf("[SERVER] Double sent: %f\n", n);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -140,7 +147,9 @@ public class EzServerSocket implements AutoCloseable {
             String data;
 
             try {
+                if(verbose) System.out.println("[SERVER] Waiting for String...");
                 data = clientInput.readUTF();
+                if(verbose) System.out.printf("[SERVER] String received: %s\n", data);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -153,6 +162,7 @@ public class EzServerSocket implements AutoCloseable {
         if(clientOutput != null){
             try {
                 clientOutput.writeUTF(text);
+                if(verbose) System.out.printf("[SERVER] String sent: %s\n", text);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -164,11 +174,15 @@ public class EzServerSocket implements AutoCloseable {
             try {
                 ArrayList<E> list = new ArrayList<>();
                 E item;
-                int listLength = readInteger();
-                int count = 0;
 
+                //Get list size
+                int listLength = clientInput.readInt();
+                if (verbose) System.out.printf("[SERVER] ArrayList size: %d\n", listLength);
+
+                int count = 0;
                 while(count != listLength){
                     item = (E) objectInput.readObject();
+                    if (verbose) System.out.printf("[SERVER] Object received: %s\n", item.toString());
                     list.add(item);
                     count++;
                 }
@@ -187,8 +201,10 @@ public class EzServerSocket implements AutoCloseable {
 
                 for(E item: list){
                     objectOutput.writeObject(item);
-                    objectOutput.flush();
+                    if (verbose) System.out.printf("[SERVER] Object sent: %s\n", item.toString());
                 }
+
+                objectOutput.flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -204,6 +220,7 @@ public class EzServerSocket implements AutoCloseable {
 
                 //Create directory if it doesn't exist
                 if(!file.exists()){
+                    if (verbose) System.out.println("[SERVER] Output directory for received files not found. Creating...\n");
                     Files.createDirectory(Paths.get("./received_files/"));
                 }
                 FileOutputStream outputFile = new FileOutputStream(file);
@@ -217,6 +234,7 @@ public class EzServerSocket implements AutoCloseable {
                 }
 
                 outputFile.close();
+                if (verbose) System.out.printf("[SERVER] File received: %s\n", file.getName());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -225,7 +243,7 @@ public class EzServerSocket implements AutoCloseable {
 
     @Override
     public void close() {
-        System.out.println("Closing...");
+        System.out.println("[SERVER] Closing...");
         try {
             if(clientSocket != null) {
                 clientInput.close();
