@@ -19,6 +19,7 @@ import java.util.ArrayList;
  */
 
 public class EzServerSocket implements AutoCloseable {
+    private boolean verbose;
     private InetSocketAddress address;
     private ServerSocket serverSocket;
     private Socket clientSocket;
@@ -34,9 +35,15 @@ public class EzServerSocket implements AutoCloseable {
             serverSocket.bind(this.address);
 
             System.out.printf("[SERVER] Listening in the address %s\n", serverSocket.getInetAddress());
+            verbose = false;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public EzServerSocket(String address, int port, boolean verbose){
+        this(address, port);
+        this.verbose = verbose;
     }
 
     public void accept(){
@@ -59,7 +66,9 @@ public class EzServerSocket implements AutoCloseable {
             int num;
 
             try {
+                if(verbose) System.out.println("[SERVER] Waiting for Integer...");
                 num = clientInput.readInt();
+                if(verbose) System.out.printf("[SERVER] Integer received: %s\n", num);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
