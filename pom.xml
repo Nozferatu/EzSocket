@@ -6,10 +6,9 @@
 
     <groupId>com.cmj.ez_socket</groupId>
     <artifactId>EzSocket</artifactId>
-    <version>0.1.6</version>
+    <version>0.1.6.1</version>
 
     <properties>
-        <maven.version>3.6.3</maven.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
