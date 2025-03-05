@@ -7,6 +7,7 @@
     <groupId>com.cmj.ez_socket</groupId>
     <artifactId>EzSocket</artifactId>
     <version>0.1.6.1</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -16,6 +17,18 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
